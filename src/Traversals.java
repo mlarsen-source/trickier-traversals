@@ -49,7 +49,7 @@ public class Traversals {
     if(node == null) return "";
     String left = buildPostOrderString(node.left);
     String right = buildPostOrderString(node.right);
-    return left += right += node.value;
+    return left + right + node.value;
   }
 
   /**
@@ -81,13 +81,14 @@ public class Traversals {
    * Counts the distinct values in the given tree.
    * If node is null, returns 0.
    *
+  
    * @param node the node of the tree
    * @return the number of unique values in the tree, or 0 if the tree is null
    */
   public static int countDistinctValues(TreeNode<Integer> node) {
     Set<Integer> set = new HashSet<>();
     Queue<TreeNode<Integer>> queue = new LinkedList<>();
-    if(node== null) return 0;
+    if(node == null) return 0;
     queue.offer(node);
     while(!queue.isEmpty()) {
       TreeNode<Integer> temp = queue.poll();
@@ -113,9 +114,7 @@ public class Traversals {
     if (node.left == null && node.right == null) return true;
     boolean left = node.left !=null && node.left.value > node.value && hasStrictlyIncreasingPath(node.left);
     boolean right = node.right!=null && node.right.value > node.value && hasStrictlyIncreasingPath(node.right);
-    
     return left || right;
-
   }
 
   // OPTIONAL CHALLENGE
@@ -130,7 +129,11 @@ public class Traversals {
    * @return true if the trees have the same shape, false otherwise
    */
   public static <T> boolean haveSameShape(TreeNode<T> nodeA, TreeNode<T> nodeB) {
-    return false;
+    if(nodeA == null && nodeB == null) return true;
+    if (nodeA == null || nodeB == null) return false;
+    boolean left = haveSameShape(nodeA.left, nodeB.left);
+    boolean right = haveSameShape(nodeA.right, nodeB.right);
+    return left && right;
   }
 
 
@@ -162,6 +165,38 @@ public class Traversals {
    * @return a list of lists, where each inner list represents a root-to-leaf path in pre-order
    */
   public static <T> List<List<T>> findAllRootToLeafPaths(TreeNode<T> node) {
-    return null;
+    List<List<T>> listA = new ArrayList<>();
+    List<T> listB = new ArrayList<>();  
+    Stack<TreeNode<T>> nodeStack = new Stack<>();
+    Stack<List<T>> listStack = new Stack<>();
+    if(node == null) return listA;
+    
+    listB.add(node.value);
+    nodeStack.push(node);
+    listStack.push(listB);
+
+    while(!nodeStack.isEmpty()) {
+      TreeNode<T> tempNode = nodeStack.pop();
+      List<T> tempList = listStack.pop();
+      
+      if (tempNode.left == null && tempNode.right == null) {
+        listA.add(tempList);
+      }
+
+      if(tempNode.right != null) {
+        nodeStack.push(tempNode.right);
+        List<T> rightList = new ArrayList<>(tempList);
+        rightList.add(tempNode.right.value);
+        listStack.push(rightList);
+      }
+
+      if(tempNode.left != null) {
+        nodeStack.push(tempNode.left);
+        List<T> leftList = new ArrayList<>(tempList);
+        leftList.add(tempNode.left.value);
+        listStack.push(leftList);
+      }
+    }
+    return listA;
   }
 }
